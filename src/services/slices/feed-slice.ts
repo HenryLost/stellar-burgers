@@ -47,6 +47,11 @@ export const feedSlice = createSlice({
 
 export const feedReducer = feedSlice.reducer;
 
+export const selectFeed = (state: RootState) => ({
+  total: state.feed.total,
+  totalToday: state.feed.totalToday
+});
+
 export const selectFeedOrders = (state: RootState) => state.feed.orders;
 export const selectFeedLoading = (state: RootState) => state.feed.isLoading;
 export const selectFeedError = (state: RootState) => state.feed.error;

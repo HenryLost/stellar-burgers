@@ -6,7 +6,8 @@ import {
   logoutApi,
   registerUserApi,
   TLoginData,
-  TRegisterData
+  TRegisterData,
+  updateUserApi
 } from '@api';
 
 import { deleteCookie, setCookie } from '../../utils/cookie';
@@ -55,6 +56,15 @@ export const getUser = createAsyncThunk('user/getUser', async () => {
   const response = await getUserApi();
   return response.user;
 });
+
+export const updateUser = createAsyncThunk(
+  'user/updateUser',
+  async (data: Partial<TRegisterData>) => {
+    const response = await updateUserApi(data);
+
+    return response.user;
+  }
+);
 
 export const logoutUser = createAsyncThunk('user/logout', async () => {
   await logoutApi();
@@ -117,6 +127,21 @@ export const userSlice = createSlice({
         state.isLoading = false;
         state.isAuthChecked = true;
         state.user = null;
+      })
+
+      // Обновление пользователя
+      .addCase(updateUser.pending, (state) => {
+        state.isLoading = true;
+        state.error = null;
+      })
+      .addCase(updateUser.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.user = action.payload;
+      })
+      .addCase(updateUser.rejected, (state, action) => {
+        state.isLoading = false;
+        state.error =
+          action.error.message ?? 'Ошибка обновления данных пользователя';
       })
 
       // Выход
