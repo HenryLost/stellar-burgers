@@ -1,31 +1,33 @@
 import { ProfileUI } from '@ui-pages';
 import { FC, SyntheticEvent, useEffect, useState } from 'react';
 
+import { useSelector } from '../../services/store';
+import { selectUser } from '../../services/slices/user-slice';
+
 export const Profile: FC = () => {
-  /** TODO: взять переменную из стора */
-  const user = {
-    name: '',
-    email: ''
-  };
+  const user = useSelector(selectUser);
+
+  const userName = user?.name ?? '';
+  const userEmail = user?.email ?? '';
 
   const [formValue, setFormValue] = useState({
-    name: user.name,
-    email: user.email,
+    name: userName,
+    email: userEmail,
     password: ''
   });
 
   useEffect(() => {
-    setFormValue((prevState) => ({
-      ...prevState,
-      name: user?.name || '',
-      email: user?.email || ''
-    }));
-  }, [user]);
+    setFormValue({
+      name: userName,
+      email: userEmail,
+      password: ''
+    });
+  }, [userName, userEmail]);
 
   const isFormChanged =
-    formValue.name !== user?.name ||
-    formValue.email !== user?.email ||
-    !!formValue.password;
+    formValue.name !== userName ||
+    formValue.email !== userEmail ||
+    formValue.password !== '';
 
   const handleSubmit = (e: SyntheticEvent) => {
     e.preventDefault();
@@ -33,9 +35,10 @@ export const Profile: FC = () => {
 
   const handleCancel = (e: SyntheticEvent) => {
     e.preventDefault();
+
     setFormValue({
-      name: user.name,
-      email: user.email,
+      name: userName,
+      email: userEmail,
       password: ''
     });
   };
@@ -56,6 +59,4 @@ export const Profile: FC = () => {
       handleInputChange={handleInputChange}
     />
   );
-
-  return null;
 };

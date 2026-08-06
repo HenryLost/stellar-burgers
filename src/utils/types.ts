@@ -12,6 +12,11 @@ export type TIngredient = {
   image_mobile: string;
 };
 
+export type TConstructorItems = {
+  bun: TIngredient | null;
+  ingredients: TConstructorIngredient[];
+};
+
 export type TConstructorIngredient = TIngredient & {
   id: string;
 };
