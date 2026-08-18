@@ -6,12 +6,14 @@ import {
   removeIngredient
 } from '../burger-constructor-slice';
 
-import {
-  TConstructorIngredient,
-  TIngredient
-} from '../../../utils/types';
+import { TConstructorIngredient, TIngredient } from '../../../utils/types';
 
 describe('burgerConstructorSlice', () => {
+  const initialState = {
+    bun: null,
+    ingredients: []
+  };
+
   const bun: TIngredient = {
     _id: 'bun-1',
     name: 'Булка',
@@ -57,17 +59,11 @@ describe('burgerConstructorSlice', () => {
       type: 'UNKNOWN'
     });
 
-    expect(state).toEqual({
-      bun: null,
-      ingredients: []
-    });
+    expect(state).toEqual(initialState);
   });
 
   test('должен добавлять булку', () => {
-    const state = burgerConstructorReducer(
-      undefined,
-      addIngredient(bun)
-    );
+    const state = burgerConstructorReducer(undefined, addIngredient(bun));
 
     expect(state.bun).toEqual(bun);
     expect(state.ingredients).toEqual([]);
@@ -80,6 +76,7 @@ describe('burgerConstructorSlice', () => {
     );
 
     expect(state.ingredients).toHaveLength(1);
+
     expect(state.ingredients[0]).toEqual(
       expect.objectContaining({
         ...ingredient,
@@ -89,13 +86,13 @@ describe('burgerConstructorSlice', () => {
   });
 
   test('должен удалять ингредиент', () => {
-    const initialState = {
+    const stateWithIngredients = {
       bun: null,
       ingredients: [ingredientWithId1, ingredientWithId2]
     };
 
     const state = burgerConstructorReducer(
-      initialState,
+      stateWithIngredients,
       removeIngredient('ingredient-1')
     );
 
@@ -103,36 +100,30 @@ describe('burgerConstructorSlice', () => {
   });
 
   test('должен перемещать ингредиент', () => {
-    const initialState = {
+    const stateWithIngredients = {
       bun: null,
       ingredients: [ingredientWithId1, ingredientWithId2]
     };
 
     const state = burgerConstructorReducer(
-      initialState,
+      stateWithIngredients,
       moveIngredient({ from: 0, to: 1 })
     );
 
-    expect(state.ingredients).toEqual([
-      ingredientWithId2,
-      ingredientWithId1
-    ]);
+    expect(state.ingredients).toEqual([ingredientWithId2, ingredientWithId1]);
   });
 
   test('должен очищать конструктор', () => {
-    const initialState = {
+    const stateWithIngredients = {
       bun,
       ingredients: [ingredientWithId1, ingredientWithId2]
     };
 
     const state = burgerConstructorReducer(
-      initialState,
+      stateWithIngredients,
       clearConstructor()
     );
 
-    expect(state).toEqual({
-      bun: null,
-      ingredients: []
-    });
+    expect(state).toEqual(initialState);
   });
 });
