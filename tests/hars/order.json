@@ -1,0 +1,19 @@
+{
+  "success": true,
+  "name": "Тестовый бургер",
+  "order": {
+    "_id": "test-order-id",
+    "status": "done",
+    "name": "Тестовый бургер",
+    "owner": {
+      "name": "Test User",
+      "email": "test@example.com",
+      "createdAt": "2026-08-18T00:00:00.000Z",
+      "updatedAt": "2026-08-18T00:00:00.000Z"
+    },
+    "createdAt": "2026-08-18T00:00:00.000Z",
+    "updatedAt": "2026-08-18T00:00:00.000Z",
+    "number": 123456,
+    "price": 999
+  }
+}
