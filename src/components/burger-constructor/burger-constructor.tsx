@@ -1,36 +1,68 @@
 import { FC, useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
+
 import { TConstructorIngredient } from '@utils-types';
 import { BurgerConstructorUI } from '@ui';
 
+import { useDispatch, useSelector } from '../../services/store';
+import {
+  clearConstructor,
+  selectConstructorItems
+} from '../../services/slices/burger-constructor-slice';
+import {
+  clearOrderModalData,
+  createOrder,
+  selectOrderModalData,
+  selectOrderRequest
+} from '../../services/slices/order-slice';
+import { selectUser } from '../../services/slices/user-slice';
+
 export const BurgerConstructor: FC = () => {
-  /** TODO: взять переменные constructorItems, orderRequest и orderModalData из стора */
-  const constructorItems = {
-    bun: {
-      price: 0
-    },
-    ingredients: []
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  const constructorItems = useSelector(selectConstructorItems);
+  const orderRequest = useSelector(selectOrderRequest);
+  const orderModalData = useSelector(selectOrderModalData);
+  const user = useSelector(selectUser);
+
+  const onOrderClick = async () => {
+    if (!constructorItems.bun || orderRequest) {
+      return;
+    }
+
+    if (!user) {
+      navigate('/login');
+      return;
+    }
+
+    const ingredientIds = [
+      constructorItems.bun._id,
+      ...constructorItems.ingredients.map((ingredient) => ingredient._id),
+      constructorItems.bun._id
+    ];
+
+    const result = await dispatch(createOrder(ingredientIds));
+
+    if (createOrder.fulfilled.match(result)) {
+      dispatch(clearConstructor());
+    }
   };
 
-  const orderRequest = false;
-
-  const orderModalData = null;
-
-  const onOrderClick = () => {
-    if (!constructorItems.bun || orderRequest) return;
+  const closeOrderModal = () => {
+    dispatch(clearOrderModalData());
   };
-  const closeOrderModal = () => {};
 
   const price = useMemo(
     () =>
       (constructorItems.bun ? constructorItems.bun.price * 2 : 0) +
       constructorItems.ingredients.reduce(
-        (s: number, v: TConstructorIngredient) => s + v.price,
+        (sum: number, ingredient: TConstructorIngredient) =>
+          sum + ingredient.price,
         0
       ),
     [constructorItems]
   );
-
-  return null;
 
   return (
     <BurgerConstructorUI
